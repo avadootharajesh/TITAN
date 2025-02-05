@@ -1,137 +1,154 @@
-resultElement.style.fontFamily = "'Poppins', sans-serif";
+function runTool2(tool) {
+  const sslscantool = document.getElementById("sslscanbtn");
+  const mhunttool = document.getElementById("mhuntbtn");
 
-function sendMessage(event) {
-    event.preventDefault();
-    const url = document.getElementById('url').value.trim();
-    const chatContainer = document.getElementById('chatContainer');
+  sslscantool.disabled = true;
+  mhunttool.disabled = true;
 
-    // Input Validation
-    if (!url) {
-        alert("Please enter a URL.");
-        return;
-    }
-
-    // Append your message (query) to the left
-    const yourMessage = document.createElement('div');
-    yourMessage.classList.add('chat-message', 'left');
-    yourMessage.textContent = `Query: ${url}`;
-    chatContainer.appendChild(yourMessage);
-
-    // Scroll to bottom to show latest messages
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+  runTool(tool).finally(() => {
+    sslscantool.disabled = false;
+    mhunttool.disabled = false;
+  });
 }
 
 function runTool(tool) {
-    const url = document.getElementById('url').value.trim();
-    const loadingElement = document.getElementById('loading');
-    const chatContainer = document.getElementById('chatContainer');
+  const url = document.getElementById("url").value.trim();
+  document.getElementById("url").value = "";
 
-    // Append message for the scan request
-    const scanRequestMessage = document.createElement('div');
-    scanRequestMessage.classList.add('chat-message', 'left');
-    scanRequestMessage.textContent = `Running scan for: ${url}`;
-    chatContainer.appendChild(scanRequestMessage);
+  const loadingElement = document.getElementById("loading");
+  const chatContainer = document.getElementById("chatContainer");
 
-    // Show the spinner
-    loadingElement.style.display = 'flex';
+  // Append message for the scan request
+  const scanRequestMessage = document.createElement("div");
+  scanRequestMessage.classList.add("chat-message", "right");
+  scanRequestMessage.textContent = `Running scan for: ${url}`;
+  chatContainer.appendChild(scanRequestMessage);
 
-    fetch(`/${tool}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ url: url })
+  // Show the spinner
+  loadingElement.style.display = "flex";
+
+  return fetch(`/${tool}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ url: url }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      loadingElement.style.display = "none";
+
+      // Append scan result message (right side)
+      const resultMessage = document.createElement("div");
+      resultMessage.classList.add("chat-message", "left");
+      if (data.error) {
+        resultMessage.textContent = `Error: ${data.error}`;
+      } else {
+        resultMessage.innerHTML = data.result;
+      }
+      chatContainer.appendChild(resultMessage);
+
+      // Scroll to bottom to show latest messages
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     })
-    .then(response => response.json())
-    .then(data => {
-        loadingElement.style.display = 'none';
-
-        // Append scan result message (right side)
-        const resultMessage = document.createElement('div');
-        resultMessage.classList.add('chat-message', 'right');
-        if (data.error) {
-            resultMessage.textContent = `Error: ${data.error}`;
-        } else {
-            resultMessage.textContent = `Result: ${data.result}`;
-        }
-        chatContainer.appendChild(resultMessage);
-        
-        // Scroll to bottom to show latest messages
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    })
-    .catch(error => {
-        loadingElement.style.display = 'none';
-        const errorMessage = document.createElement('div');
-        errorMessage.classList.add('chat-message', 'right');
-        errorMessage.textContent = `Error: ${error.message}`;
-        chatContainer.appendChild(errorMessage);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
+    .catch((error) => {
+      loadingElement.style.display = "none";
+      const errorMessage = document.createElement("div");
+      errorMessage.classList.add("chat-message", "right");
+      errorMessage.textContent = `Error: ${error.message}`;
+      chatContainer.appendChild(errorMessage);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     });
 }
 
+const print = console.log;
 
-// Function to smoothly expand the result div based on its content
-function smoothExpand(resultElement) {
-    // Calculate the new width based on the content
-    const newWidth = Math.max(100, resultElement.scrollWidth); // Ensure minimum width
-    resultElement.style.width = `${newWidth}px`;  // Apply new width to trigger transition
+function runMhuntScan2() {
+  const sslscantool = document.getElementById("sslscanbtn");
+  const mhunttool = document.getElementById("mhuntbtn");
+
+  sslscantool.disabled = true;
+  mhunttool.disabled = true;
+
+  runMhuntScan().finally(() => {
+    sslscantool.disabled = false;
+    mhunttool.disabled = false;
+  });
 }
-
 
 function runMhuntScan() {
-    const url = document.getElementById('url').value.trim();
-    const loadingElement = document.getElementById('loading');
-    const resultElement = document.getElementById('result');
-    const stopButton = document.getElementById('stopScan');
+  const url = document.getElementById("url").value.trim(); // Get the URL input
+  document.getElementById("url").value = "";
+  const loadingElement = document.getElementById("loading");
+  const chatContainer = document.getElementById("chatContainer");
 
-    // Input Validation
-    if (!url) {
-        alert("Please enter a URL.");
-        return;
-    }
+  // Append a message indicating the scan request has been made
+  const scanRequestMessage = document.createElement("div");
+  scanRequestMessage.classList.add("chat-message", "right");
+  scanRequestMessage.textContent = `Running scan for: ${url}`;
+  chatContainer.appendChild(scanRequestMessage);
 
-    // Show spinner and stop button
-    loadingElement.style.display = 'flex';
-    stopButton.style.display = 'inline-block';
-    resultElement.innerHTML = '';
+  // Show the loading spinner
+  loadingElement.style.display = "flex";
 
-    // Initialize EventSource
-    const eventSource = new EventSource(`/mhunt?url=${encodeURIComponent(url)}`);
+  // Send POST request to start the scan
 
-    eventSource.onmessage = function (event) {
-        if (event.data.startsWith("Error:") || event.data.startsWith("Exception occurred:")) {
-            resultElement.innerHTML += `<p style="color: red;">${event.data}</p>`;
-            loadingElement.style.display = 'none';
-            stopButton.style.display = 'none';
-            eventSource.close();
-        } else {
-            resultElement.innerHTML += `<pre>${event.data}</pre>`;
-        }
-    };
+  return new Promise((resolve, reject) => {
+    fetch("/mhunt", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ url: url }),
+    })
+      .then((response) => {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        const stream = new ReadableStream({
+          start(controller) {
+            function push() {
+              reader.read().then(({ done, value }) => {
+                if (done) {
+                  controller.close();
+                  loadingElement.style.display = "none"; // Hide the loading spinner when the stream ends
+                  resolve(); // Resolve the promise when the stream ends
+                  return;
+                }
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split("\n");
 
-    eventSource.onerror = function () {
-        resultElement.innerHTML += `<p style="color: red;">An error occurred while processing the scan.</p>`;
-        loadingElement.style.display = 'none';
-        stopButton.style.display = 'none';
-        eventSource.close();
-    };
+                lines.forEach((line) => {
+                  if (
+                    line.trim() !== "" &&
+                    line.trim() !== "\n" &&
+                    line.trim() !== "data:"
+                  ) {
+                    // Create a new chat message for this line
+                    const message = document.createElement("div");
+                    message.classList.add("chat-message", "left");
+                    message.textContent = line.replace("data: ", "");
+                    chatContainer.appendChild(message);
 
-    eventSource.onopen = function () {
-        console.log("Connection to server opened.");
-    };
-}
+                    // Scroll to the bottom to keep the latest message visible
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                  }
+                });
 
-function stopScan() {
-    fetch('/stop_scan')
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('stopScan').style.display = 'none';
+                push(); // Continue reading the next chunk
+              });
             }
-        })
-        .catch(error => {
-            console.error('Error stopping scan:', error);
+
+            push(); // Start reading the first chunk
+          },
         });
+
+        // Start processing the response as a stream
+        new Response(stream);
+      })
+      .catch((error) => {
+        loadingElement.style.display = "none";
+        const errorMessage = document.createElement("div");
+        errorMessage.classList.add("chat-message", "right");
+        errorMessage.textContent = `Error: ${error.message}`;
+        chatContainer.appendChild(errorMessage);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        reject(error); // Reject the promise on error
+      });
+  });
 }
-
-
-console.log("Hello");

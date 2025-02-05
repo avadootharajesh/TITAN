@@ -1,124 +1,169 @@
 h1 {
-    font-family: "Poppins";
-    color: white;
+  font-family: "Poppins";
+  color: white;
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    margin: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: black;
+  font-family: "Poppins", sans-serif;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: black;
+}
+
+.chatapplication-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: black;
 }
 
 input[type="text"] {
-    width: 45vw;
-    padding: 10px;
-    margin-right: 10px;
-    font-family: 'Poppins', sans-serif;
-    border: none;
-    border-radius: 50px;
-
-    background-color: #ffffff31;
-    color: white;
+  width: 45vw;
+  padding: 10px;
+  margin-right: 10px;
+  font-family: "Poppins", sans-serif;
+  border: none;
+  border-radius: 50px;
+  background-color: #ffffff31;
+  color: white;
 }
 
 input[type="text"]:active {
-    border: none;
+  border: none;
 }
 
 input[type="text"]:focus {
-    border: none;
-    outline: none;
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
+  border: none;
+  outline: none;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
 }
 
+.topcontainer {
+  display: flex;
+  align-items: start;
+  justify-content: flex-start;
+  flex-direction: column;
+  width: 100%;
+}
 
 button {
-    font-family: "Poppins";
-
-    padding: 10px 15px;
-    margin-right: 5px;
-    cursor: pointer;
-    border: none;
-    outline: none;
-    border-radius: 50px;
-
-    transition: 0.1s background-color linear;
+  font-family: "Poppins";
+  padding: 10px 15px;
+  margin-right: 5px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  border-radius: 50px;
+  transition: 0.1s background-color linear;
 }
 
 button:hover {
-    background-color: #ffffff33;
-    color: white;
+  background-color: #ffffff33;
+  color: white;
 }
 
-#result, #result pre {
-    font-family: "Poppins", sans-serif !important;
+#result,
+#result pre {
+  font-family: "Poppins", sans-serif !important;
 }
 
-/* Container for chat-like interaction */
 #chatContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    width: 80vw;
-    max-width: 800px;
-    margin: 20px auto;
-    height: 500px;
-    overflow-y: auto;
-    padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  height: 70vh;
+  overflow-y: auto; /* Allow scrolling for long content */
+  padding: 10px;
+  scrollbar-width: none;
 }
 
-/* Style for both your message and output messages */
 .chat-message {
-    max-width: 60%;
-    padding: 10px 15px;
-    margin: 5px;
-    border-radius: 15px;
-    font-family: "Poppins", sans-serif;
-    font-size: 15px;
-    white-space: pre-wrap;
+  width: fit-content;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 15px;
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  white-space: pre-wrap;
 }
 
 /* Your message (query) aligned to the left */
 .chat-message.left {
-    background-color: #4caf50;
-    color: white;
-    align-self: flex-start;
+  background-color: #4caf50;
+  color: white;
+  align-self: flex-end;
 }
 
 /* Scan result message aligned to the right */
 .chat-message.right {
-    background-color: #3498db;
-    color: white;
-    align-self: flex-end;
+  background-color: #3498db;
+  color: white;
+  align-self: flex-start;
 }
 
 /* Spinner Styles */
 .spinner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .spinner div {
-    width: 15px;
-    height: 15px;
-    border: 4px solid transparent;
-    border-top: 4px solid #3498db;  /* You can change the color */
-    border-radius: 50%;
-    animation: spin 2s linear infinite;  /* Slower spin with 2s duration */
+  width: 15px;
+  height: 15px;
+  border: 4px solid transparent;
+  border-top: 4px solid #3498db; /* You can change the color */
+  border-radius: 50%;
+  animation: spin 2s linear infinite; /* Slower spin with 2s duration */
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Form container to position it near the bottom */
+.form-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  position: relative;
+  bottom: 0;
+  margin-top: auto; /* Moves the form to the bottom */
+}
+
+#result h3 {
+  font-size: 18px;
+  color: #3498db;
+}
+
+#result ul {
+  margin-left: 20px;
+  color: #fff;
+}
+
+#result ul li {
+  margin-bottom: 5px;
+}
+
+#result p {
+  color: #fff;
+}
+
+#result strong {
+  color: #f39c12;
 }
