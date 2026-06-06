@@ -1,0 +1,1 @@
+.\ffuf.exe -w "subdomains-top1million-110000.txt" -u "https://FUZZ.cvr.ac.in" -mc 200-299,300-399 -t 250 -s -of csv -o output.csv
